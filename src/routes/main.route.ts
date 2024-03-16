@@ -8,4 +8,25 @@ router.route("/main/users")
     new UserControllers(req, res).getAllUsers();
 })
 
+.post((req: Request, res: Response)=>{
+    const user: User = req.body;
+
+    new UserControllers(req, res).createUser(user);
+})
+
+router.route("/main/user/:id")
+
+.patch((req: Request, res: Response)=>{
+    const {id} = req.params;
+    const user: User = req.body;
+
+    new UserControllers(req, res).updateUser(id, user);
+})
+
+.delete((req: Request, res: Response)=>{
+    const {id} = req.params;
+
+    new UserControllers(req, res).deleleteUser(id);
+})
+
 module.exports = router;
