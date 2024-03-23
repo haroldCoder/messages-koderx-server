@@ -3,6 +3,7 @@ import dotenv from "dotenv"
 import cors from "cors"
 import bodyParser = require("body-parser");
 import VerifyUser from "./middleware/main.middleware";
+import ManagePrisma from "./utils/managge_prisma";
 
 dotenv.config()
 
@@ -18,4 +19,5 @@ app.use("/api/v1", VerifyUser, require("./routes/main.route"))
 
 app.listen(app.get("port"), ()=>{
     console.log(`Server on port ${app.get("port")}`);
+    new ManagePrisma().comprobeConnection();
 })
