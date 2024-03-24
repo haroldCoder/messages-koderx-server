@@ -2,12 +2,12 @@ import { PrismaClient } from "@prisma/client";
 import { Request, Response } from "express";
 
 class UserControllers{
-    req: Request
-    res: Response
+    req?: Request
+    res?: Response
     private prisma_client: PrismaClient
     private arrayErrors: Array<{state: number, desc: string}>;
 
-    constructor(req: Request, res: Response){
+    constructor(req?: Request, res?: Response){
         this.req = req;
         this.res = res;
         this.prisma_client = new PrismaClient();
@@ -23,18 +23,18 @@ class UserControllers{
     getAllUsers = async() =>{
         try{
            const response = await this.prisma_client.user.findMany(); 
-           this.res.status(200).json(response);
+           this.res?.status(200).json(response);
         }
         catch(err){
             console.log(err);
-            this.res.status(500).json({
+            this.res?.status(500).json({
                 "message": "An ocurred error",
                 "error": err
             });
         }
     }
 
-    createUser = async(user: User) =>{
+    createUser = async(user: User): Promise<User | undefined> =>{
         if(!user.username){
             this.arrayErrors[0].state = 1;
         }
@@ -50,13 +50,13 @@ class UserControllers{
 
         this.arrayErrors.some((e)=>{
             if(e.state == 1){
-                this.res.status(500).json({"err": e.desc});
+                this.res?.status(500).json({"err": e.desc});
                 return;
             }
         })
 
         try {
-            await this.prisma_client.user.create({
+            const response = await this.prisma_client.user.create({
                 data: {
                     username: user.username,
                     email: user.email,
@@ -64,9 +64,12 @@ class UserControllers{
                     tel: user.tel,
                 }
             })
+
+            this.res?.status(200).json(response)
+            return response;
         } catch (err) {
             console.log(err);
-            this.res.status(500).json({
+            this.res?.status(500).json({
                 "message": "An ocurred error",
                 "error": err
             });
@@ -82,7 +85,7 @@ class UserControllers{
 
         this.arrayErrors.some((ae)=>{
             if(ae.state == 1){
-                this.res.status(500).json({"err": ae.desc});
+                this.res?.status(500).json({"err": ae.desc});
                 return;
             }
         });
@@ -100,10 +103,10 @@ class UserControllers{
                 }
             })
 
-            this.res.status(200).send(`user ${user.username} is update`);
+            this.res?.status(200).send(`user ${user.username} is update`);
         } catch (err) {
             console.log(err);
-            this.res.status(500).json({
+            this.res?.status(500).json({
                 "message": "An ocurred error",
                 "error": err
             });
@@ -118,10 +121,10 @@ class UserControllers{
                 }
             })
 
-            this.res.status(200).send("user deleted");
+            this.res?.status(200).send("user deleted");
         } catch (err) {
             console.log(err);
-            this.res.status(500).json({
+            this.res?.status(500).json({
                 "message": "An ocurred error",
                 "error": err
             });
