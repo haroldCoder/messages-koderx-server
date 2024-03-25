@@ -1,45 +1,22 @@
 import { PrismaClient } from "@prisma/client";
 import { Request, Response } from "express";
 
-class ContactControllers {
-    private prismaClient: PrismaClient;
+class messagesControllers {
     req?: Request;
     res?: Response;
+    private prismaClient: PrismaClient;
 
     constructor(req?: Request, res?: Response) {
-        this.res = res;
         this.req = req;
+        this.res = res;
         this.prismaClient = new PrismaClient();
     }
 
-    getContacts = async (iduser: string) => {
+    getMessages = async (idcontact: string) => {
         try {
-            const response = await this.prismaClient.contact.findMany({
-                where: { user1Id: iduser },
-                select: {
-                    id: true,
-                    user1: true,
-                    user2: true
-                }
-            });
-
-            this.res?.status(200).json(response);
-        }
-        catch(err){
-            console.log(err);
-            this.res?.status(500).json({
-                "message": "An ocurred error",
-                "error": err
-            });
-        }
-    }
-
-    createContact = async(user1: string, user2: string) =>{
-        try{
-            const response = await this.prismaClient.contact.create({
-                data: {
-                    user1Id: user1,
-                    user2Id: user2
+            const response = await this.prismaClient.messages.findMany({
+                where: {
+                    contactid: idcontact
                 }
             })
 
@@ -55,14 +32,14 @@ class ContactControllers {
         }
     }
 
-    deleteContact = async(user1: string, user2: string) =>{
+    createMessage = async(message: Messages) =>{
         try{
-            const response = await this.prismaClient.contact.deleteMany({
-                where: {
-                    user1Id: user1,
-                    user2Id: user2
+            const response = await this.prismaClient.messages.create({
+                data: {
+                    contactid: message.contactid,
+                    message: message.messages,
                 }
-            });
+            })
 
             this.res?.status(200).json(response);
         }
@@ -74,6 +51,25 @@ class ContactControllers {
             });
         }
     }
+
+    deleteMessage = async(idmsg: string) =>{
+        try{
+            await this.prismaClient.messages.deleteMany({
+                where: {
+                    id: idmsg
+                }
+            });
+
+            this.res?.status(200).send(`message delete successfully`);
+        }
+        catch(err){
+            console.log(err);
+            this.res?.status(500).json({
+                "message": "An ocurred error",
+                "error": err
+            });
+        }
+    }
 }
 
-export default ContactControllers;
+export default messagesControllers;

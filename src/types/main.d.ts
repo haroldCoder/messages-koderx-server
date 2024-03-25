@@ -13,7 +13,7 @@ interface Contact{
 }
 
 interface Messages{
-    id: string,
-    messages: string[],
+    id?: string,
+    messages: string,
     contactid: string
 }

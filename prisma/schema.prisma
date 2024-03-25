@@ -34,7 +34,7 @@ model Contact{
 
 model Messages{
   id String @id @default(auto()) @map("_id") @db.ObjectId
-  message String[]
+  message String
   contact Contact @relation(fields: [contactid], references: [id])
   contactid String @db.ObjectId
 }

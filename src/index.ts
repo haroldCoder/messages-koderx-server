@@ -17,6 +17,7 @@ app.set("port", process.env.PORT || 1002)
 app.use("/", require("./routes/login.route"))
 app.use("/api/v1", VerifyUser, require("./routes/main.route"))
 app.use("/api/v1", VerifyUser, require("./routes/contact.route"))
+app.use("/api/v1", VerifyUser, require("./routes/messages.route"))
 
 app.listen(app.get("port"), ()=>{
     console.log(`Server on port ${app.get("port")}`);
