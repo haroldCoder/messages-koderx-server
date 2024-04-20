@@ -1,10 +1,12 @@
 import { PrismaClient } from "@prisma/client";
-import { Request, Response } from "express";
+import { Request, Response, request } from "express";
+import expres from "express";
+import LoginUser from "../middleware/login.middleware";
 
 class UserControllers{
     req?: Request
     res?: Response
-    private prisma_client: PrismaClient
+    protected prisma_client: PrismaClient
     private arrayErrors: Array<{state: number, desc: string}>;
 
     constructor(req?: Request, res?: Response){
@@ -65,7 +67,12 @@ class UserControllers{
                 }
             })
 
-            this.res?.status(200).json(response)
+            const token = LoginUser(request, expres.response, true, {username: user.username, email: user.email, password: user.password}, "h6")
+
+            this.res?.status(200).json({
+                user: response,
+                token: token
+            })
             return response;
         } catch (err) {
             console.log(err);
